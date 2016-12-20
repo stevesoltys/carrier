@@ -1,6 +1,7 @@
 package com.stevesoltys.carrier.repository;
 
 import com.stevesoltys.carrier.model.Account;
+import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import java.util.Set;
  *
  * @author Steve Soltys
  */
+@Repository
 public class AccountRepository {
 
     /**
