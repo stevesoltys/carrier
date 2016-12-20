@@ -44,8 +44,8 @@ public class SMTPMessageHandler implements SimpleMessageListener {
 
         Optional<MaskedAddress> replyOptional = maskedAddressRepository.findByReplyAddress(recipient);
 
-        if(!replyOptional.isPresent() || !from.equalsIgnoreCase(replyOptional.get().getDestination())) {
-            return false;
+        if(replyOptional.isPresent() && from.equalsIgnoreCase(replyOptional.get().getDestination())) {
+            return true;
         }
 
         return maskedAddressRepository.findByAddress(recipient).isPresent();

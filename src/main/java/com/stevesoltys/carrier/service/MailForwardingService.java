@@ -54,28 +54,31 @@ public class MailForwardingService {
             MaskedAddress maskedAddress = maskedAddressOptional.get();
             String destination = maskedAddress.getDestination();
 
-            InternetAddress toAddress = new InternetAddress(destination);
-            InternetAddress fromAddress = new InternetAddress(email.getToEmailHeaderValue());
+            InternetAddress resultToAddress = new InternetAddress(destination);
+            InternetAddress resultFromAddress;
 
-            if (maskedAddress.getReplyAddresses().containsKey(fromAddress.getPersonal())) {
+            InternetAddress toAddress = new InternetAddress(email.getToEmailHeaderValue());
+            InternetAddress fromAddress = new InternetAddress(email.getFromEmailHeaderValue());
 
-                String replyAddress = maskedAddress.getReplyAddresses().remove(fromAddress.getPersonal());
-                toAddress = new InternetAddress(replyAddress);
-                updateHost(replyAddress);
+            if (maskedAddress.getReplyAddresses().containsKey(toAddress.getAddress())) {
 
-                fromAddress = new InternetAddress(maskedAddress.getAddress());
+                String replyForwardAddress = maskedAddress.getReplyAddresses().remove(toAddress.getAddress());
+                resultToAddress = new InternetAddress(replyForwardAddress);
+                updateHost(replyForwardAddress);
+
+                resultFromAddress = new InternetAddress(maskedAddress.getAddress());
 
             } else {
                 String domain = clientConfiguration.getDomain();
-                InternetAddress originalFromAddress = new InternetAddress(email.getFromEmailHeaderValue());
+                InternetAddress replyAddress = maskedAddress.generateReplyAddress(domain, fromAddress);
 
-                InternetAddress replyAddress = maskedAddress.generateReplyAddress(domain, originalFromAddress);
-                fromAddress.setPersonal(replyAddress.getAddress());
+                resultFromAddress = new InternetAddress(replyAddress.getAddress());
+                resultFromAddress.setPersonal(fromAddress.getAddress());
             }
 
-            updateHost(toAddress.getAddress());
+            updateHost(resultToAddress.getAddress());
 
-            Transport.send(messageFactory.createMimeMessage(email, fromAddress, toAddress));
+            Transport.send(messageFactory.createMimeMessage(email, resultFromAddress, resultToAddress));
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -97,9 +100,15 @@ public class MailForwardingService {
     }
 
     private Optional<MaskedAddress> getMaskedAddress(Email email) throws AddressException {
-        InternetAddress localAddress = new InternetAddress(email.getToEmailHeaderValue());
+        InternetAddress address = new InternetAddress(email.getToEmailHeaderValue());
 
-        return maskedAddressRepository.findByAddress(localAddress.getAddress());
+        Optional<MaskedAddress> replyAddressOptional = maskedAddressRepository.findByReplyAddress(address.getAddress());
+
+        if(replyAddressOptional.isPresent()) {
+            return replyAddressOptional;
+        }
+
+        return maskedAddressRepository.findByAddress(address.getAddress());
     }
 
 }
