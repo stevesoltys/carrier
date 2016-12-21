@@ -13,19 +13,15 @@ import tech.blueglacier.email.Email;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.Session;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.stream.Collectors;
 
 /**
@@ -42,19 +38,19 @@ public class SMTPMessageFactory {
     }
 
 
-    public MimeMessage createMimeMessage(Email email, InternetAddress senderAddress,
-                                          InternetAddress destinationAddress) throws Exception {
+    public MimeMessage createMimeMessage(Email email, InternetAddress fromAddress, InternetAddress toAddress)
+            throws Exception {
 
         if (clientConfiguration.isDkimEnabled()) {
-            return createSignedMimeMessage(email, senderAddress, destinationAddress);
+            return createSignedMimeMessage(email, fromAddress, toAddress);
 
         } else {
-            return createUnsignedMimeMessage(email, senderAddress, destinationAddress);
+            return createUnsignedMimeMessage(email, fromAddress, toAddress);
         }
     }
 
     private MimeMessage createUnsignedMimeMessage(Email email, InternetAddress fromAddress, InternetAddress toAddress)
-            throws Exception {
+            throws MessagingException, IOException {
 
         Session session = Session.getDefaultInstance(System.getProperties());
         MimeMessage message = new MimeMessage(session);
@@ -89,8 +85,8 @@ public class SMTPMessageFactory {
         return message;
     }
 
-    private MimeMessage createSignedMimeMessage(Email email, InternetAddress senderAddress,
-                                                InternetAddress destinationAddress) throws Exception {
+    private MimeMessage createSignedMimeMessage(Email email, InternetAddress fromAddress, InternetAddress toAddress)
+            throws NoSuchAlgorithmException, IOException, InvalidKeySpecException, MessagingException {
 
         String signingDomain = clientConfiguration.getDomain();
         String selector = clientConfiguration.getDkimSelector();
@@ -98,7 +94,7 @@ public class SMTPMessageFactory {
         File privateKeyFile = new File(clientConfiguration.getPrivateKeyFile());
         DkimSigner dkimSigner = new DkimSigner(signingDomain, selector, privateKeyFile);
 
-        dkimSigner.setIdentity(senderAddress.getAddress());
+        dkimSigner.setIdentity(fromAddress.getAddress());
         dkimSigner.setHeaderCanonicalization(Canonicalization.SIMPLE);
         dkimSigner.setBodyCanonicalization(Canonicalization.RELAXED);
 
@@ -106,6 +102,6 @@ public class SMTPMessageFactory {
         dkimSigner.setLengthParam(true);
         dkimSigner.setZParam(false);
 
-        return new DkimMessage(createUnsignedMimeMessage(email, senderAddress, destinationAddress), dkimSigner);
+        return new DkimMessage(createUnsignedMimeMessage(email, fromAddress, toAddress), dkimSigner);
     }
 }
