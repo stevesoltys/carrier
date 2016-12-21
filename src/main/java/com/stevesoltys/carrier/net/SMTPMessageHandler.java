@@ -14,6 +14,7 @@ import org.apache.james.mime4j.stream.MimeConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.subethamail.smtp.helper.SimpleMessageListener;
+import org.subethamail.smtp.server.SMTPServer;
 import tech.blueglacier.email.Email;
 import tech.blueglacier.parser.CustomContentHandler;
 
@@ -22,13 +23,21 @@ import java.io.InputStream;
 import java.util.Optional;
 
 /**
+ * A message handler for an {@link SMTPServer} instance.
+ *
  * @author Steve Soltys
  */
 @Component
 public class SMTPMessageHandler implements SimpleMessageListener {
 
+    /**
+     * The masked address repository.
+     */
     private final MaskedAddressRepository maskedAddressRepository;
 
+    /**
+     * The mail forwarding service.
+     */
     private final MailForwardingService mailForwardingService;
 
     @Autowired

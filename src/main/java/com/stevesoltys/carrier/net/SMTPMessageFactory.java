@@ -13,23 +13,32 @@ import tech.blueglacier.email.Email;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.mail.*;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-import java.io.*;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 
 /**
+ * A message factory for {@link MimeMessage}s using the {@link SMTPClientConfiguration}.
+ *
  * @author Steve Soltys
  */
 @Component
 public class SMTPMessageFactory {
 
+    /**
+     * The client configuration.
+     */
     private final SMTPClientConfiguration clientConfiguration;
 
     @Autowired
@@ -37,7 +46,16 @@ public class SMTPMessageFactory {
         this.clientConfiguration = clientConfiguration;
     }
 
-
+    /**
+     * Creates a MIME message used for forwarding the given incoming e-mail. The {@link SMTPClientConfiguration} is
+     * utilized to decide whether or not this function will sign the message using DKIM.
+     *
+     * @param email       The parsed e-mail.
+     * @param fromAddress The 'from' address.
+     * @param toAddress   The 'to' address.
+     * @return The MIME message.
+     * @throws Exception If there is an error while creating the MIME message.
+     */
     public MimeMessage createMimeMessage(Email email, InternetAddress fromAddress, InternetAddress toAddress)
             throws Exception {
 
@@ -49,8 +67,17 @@ public class SMTPMessageFactory {
         }
     }
 
+    /**
+     * Creates an unsigned MIME message used for forwarding the given incoming e-mail.
+     *
+     * @param email       The parsed e-mail.
+     * @param fromAddress The 'from' address.
+     * @param toAddress   The 'to' address.
+     * @return The MIME message.
+     * @throws Exception If there is an error while creating the unsigned MIME message.
+     */
     private MimeMessage createUnsignedMimeMessage(Email email, InternetAddress fromAddress, InternetAddress toAddress)
-            throws MessagingException, IOException {
+            throws Exception {
 
         Session session = Session.getDefaultInstance(System.getProperties());
         MimeMessage message = new MimeMessage(session);
@@ -85,8 +112,17 @@ public class SMTPMessageFactory {
         return message;
     }
 
+    /**
+     * Creates a signed MIME message used for forwarding the given incoming e-mail.
+     *
+     * @param email       The parsed e-mail.
+     * @param fromAddress The 'from' address.
+     * @param toAddress   The 'to' address.
+     * @return The MIME message.
+     * @throws Exception If there is an error while creating the unsigned MIME message.
+     */
     private MimeMessage createSignedMimeMessage(Email email, InternetAddress fromAddress, InternetAddress toAddress)
-            throws NoSuchAlgorithmException, IOException, InvalidKeySpecException, MessagingException {
+            throws Exception {
 
         String signingDomain = clientConfiguration.getDomain();
         String selector = clientConfiguration.getDkimSelector();
