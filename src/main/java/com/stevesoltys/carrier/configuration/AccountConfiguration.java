@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * A list of {@link Account}s.
+ *
  * @author Steve Soltys
  */
 @Component

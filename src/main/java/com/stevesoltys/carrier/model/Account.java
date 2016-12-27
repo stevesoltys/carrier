@@ -1,6 +1,8 @@
 package com.stevesoltys.carrier.model;
 
 /**
+ * An account with credentials that can be used to access the REST API.
+ *
  * @author Steve Soltys
  */
 public class Account {

@@ -8,23 +8,41 @@ import java.net.UnknownHostException;
 import java.util.Map;
 
 /**
+ * Configuration that is used for the SMTP server.
+ *
  * @author Steve Soltys
  */
 @Component
 public class SMTPServerConfiguration extends CarrierConfiguration {
 
+    /**
+     * The server map configuration key.
+     */
     private static final String SERVER_CONFIGURATION_KEY = "server";
 
+    /**
+     * The localhost address configuration key.
+     */
     private static final String LOCALHOST_KEY = "localhost";
 
+    /**
+     * The port configuration key.
+     */
     private static final String PORT_KEY = "port";
 
+    /**
+     * The force TLS configuration key.
+     */
     private static final String FORCE_TLS_KEY = "force_tls";
 
-    private String localhost;
-
+    /**
+     * The server port.
+     */
     private int port;
 
+    /**
+     * The force TLS flag.
+     */
     private boolean forceTls;
 
     @Override
@@ -39,7 +57,7 @@ public class SMTPServerConfiguration extends CarrierConfiguration {
 
         try {
             String defaultLocalhost = InetAddress.getLocalHost().getHostAddress();
-            this.localhost = (String) configuration.getOrDefault(LOCALHOST_KEY, defaultLocalhost);
+            String localhost = (String) configuration.getOrDefault(LOCALHOST_KEY, defaultLocalhost);
 
             System.setProperty("mail.smtp.localhost", localhost);
 
@@ -51,14 +69,20 @@ public class SMTPServerConfiguration extends CarrierConfiguration {
         this.forceTls = (boolean) configuration.getOrDefault(FORCE_TLS_KEY, true);
     }
 
-    public String getLocalhost() {
-        return localhost;
-    }
-
+    /**
+     * Gets the server port.
+     *
+     * @return The server port.
+     */
     public int getPort() {
         return port;
     }
 
+    /**
+     * Gets the forced TLS server flag.
+     *
+     * @return The force TLS flag.
+     */
     public boolean isTlsForced() {
         return forceTls;
     }

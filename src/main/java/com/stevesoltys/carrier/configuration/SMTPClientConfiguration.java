@@ -6,42 +6,92 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
+ * Configuration that is used for the SMTP client.
+ *
  * @author Steve Soltys
  */
 @Component
 public class SMTPClientConfiguration extends CarrierConfiguration {
 
+    /**
+     * The client configuration key.
+     */
     private static final String CLIENT_CONFIGURATION_KEY = "client";
 
+    /**
+     * The DKIM flag configuration key.
+     */
     private static final String DKIM_FLAG_KEY = "dkim";
 
+    /**
+     * The DKIM selector configuration key.
+     */
     private static final String DKIM_SELECTOR_KEY = "dkim_selector";
 
+    /**
+     * The DKIM private key file configuration key.
+     */
     private static final Object DKIM_PRIVATE_KEY = "dkim_private_key";
 
+    /**
+     * The default private key file location.
+     */
     private static final String DEFAULT_PRIVATE_KEY_LOCATION =
             CarrierConfigurationLoader.CARRIER_CONFIGURATION_DIRECTORY + "/dkim.der";
 
+    /**
+     * The domain configuration key.
+     */
     private static final String DOMAIN_KEY = "domain";
 
+    /**
+     * The SSL flag configuration key.
+     */
     private static final String SSL_KEY = "ssl";
 
+    /**
+     *  The STARTTLS flag configuration key.
+     */
     private static final String START_TLS_KEY = "starttls";
 
+    /**
+     * The keystore file location configuration key.
+     */
     private static final String KEYSTORE_KEY = "keystore";
 
+    /**
+     * The keystore password configuration key.
+     */
     private static final String KEYSTORE_PASSWORD_KEY = "keystore_password";
 
+    /**
+     * The DKIM flag.
+     */
     private boolean dkimEnabled;
 
+    /**
+     * The DKIM domain selector.
+     */
     private String dkimSelector;
 
+    /**
+     * The DKIM private key file location.
+     */
     private String privateKeyFile;
 
+    /**
+     * The domain address.
+     */
     private String domain;
 
+    /**
+     * The STARTTLS flag.
+     */
     private boolean startTls;
 
+    /**
+     * The SSL flag.
+     */
     private boolean ssl;
 
     @Override
