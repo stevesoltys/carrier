@@ -34,8 +34,8 @@ public class MaskedAddress implements Serializable {
      * A map containing the 'reply' addresses. These are the addresses used for replying to the original sender. They
      * are randomly generated tokens combined with your domain name.
      */
+    @Column
     @ElementCollection
-    @OrderColumn
     private final Map<String, String> replyAddresses;
 
     /**
@@ -91,7 +91,7 @@ public class MaskedAddress implements Serializable {
     }
 
     /**
-     * Gets the reply address map.These are the addresses used for replying to the original sender. They are randomly
+     * Gets the reply address map. These are the addresses used for replying to the original sender. They are randomly
      * generated tokens combined with your domain name.
      *
      * @return The reply address map.

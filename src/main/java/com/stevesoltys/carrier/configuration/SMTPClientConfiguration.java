@@ -28,6 +28,10 @@ public class SMTPClientConfiguration extends CarrierConfiguration {
 
     private static final String START_TLS_KEY = "starttls";
 
+    private static final String KEYSTORE_KEY = "keystore";
+
+    private static final String KEYSTORE_PASSWORD_KEY = "keystore_password";
+
     private boolean dkimEnabled;
 
     private String dkimSelector;
@@ -45,7 +49,7 @@ public class SMTPClientConfiguration extends CarrierConfiguration {
     void initialize(Map<String, Object> configuration) throws CarrierConfigurationException {
         configuration = (Map<String, Object>) configuration.getOrDefault(CLIENT_CONFIGURATION_KEY, null);
 
-        if(configuration == null) {
+        if (configuration == null) {
             throw new CarrierConfigurationException("Could not find 'client' configuration entry.");
         }
 
@@ -57,11 +61,16 @@ public class SMTPClientConfiguration extends CarrierConfiguration {
         this.startTls = (boolean) configuration.getOrDefault(START_TLS_KEY, true);
         this.ssl = (boolean) configuration.getOrDefault(SSL_KEY, false);
 
-        System.setProperty("javax.net.ssl.keyStore", "mySrvKeystore");
-        System.setProperty("javax.net.ssl.keyStorePassword", "1234567");
-
         System.setProperty("mail.smtp.starttls.enable", Boolean.toString(startTls));
         System.setProperty("mail.smtp.ssl.enable", Boolean.toString(ssl));
+
+        String keystore = (String) configuration.getOrDefault(KEYSTORE_KEY, null);
+        String keystorePassword = (String) configuration.getOrDefault(KEYSTORE_PASSWORD_KEY, null);
+
+        if (keystore != null && keystorePassword != null) {
+            System.setProperty("javax.net.ssl.keyStore", keystore);
+            System.setProperty("javax.net.ssl.keyStorePassword", keystorePassword);
+        }
     }
 
     public boolean isDkimEnabled() {
@@ -87,4 +96,5 @@ public class SMTPClientConfiguration extends CarrierConfiguration {
     public boolean isStartTlsEnabled() {
         return startTls;
     }
+
 }

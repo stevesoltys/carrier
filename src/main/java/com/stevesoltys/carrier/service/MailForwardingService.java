@@ -124,7 +124,6 @@ public class MailForwardingService {
         InternetAddress fromAddress = new InternetAddress(maskedAddress.getAddress());
         InternetAddress toAddress = new InternetAddress(replyForwardAddress);
 
-        updateHost(toAddress.getAddress());
         Transport.send(messageFactory.createMimeMessage(email, fromAddress, toAddress));
     }
 
@@ -144,8 +143,9 @@ public class MailForwardingService {
 
         InternetAddress toAddress = new InternetAddress(maskedAddress.getDestination());
         InternetAddress fromAddress = new InternetAddress(replyAddress.getAddress());
-        fromAddress.setPersonal(fromAddress.getAddress());
+        fromAddress.setPersonal(originalFromAddress.getAddress());
 
+        updateHost(toAddress.getAddress());
         Transport.send(messageFactory.createMimeMessage(email, fromAddress, toAddress));
     }
 

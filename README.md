@@ -11,7 +11,7 @@ Incoming mail can be replied to, meaning one could have a single "real" address 
 A REST API is provided for creating, modifying, and deleting masked e-mail addresses.
 
 ## Installation
-Since this is a mail server/client and uses an external database, installation does require some configuration.
+Since this is a mail server/client and uses an external database, installation does require configuration.
 
 Check out [the wiki](https://github.com/stevesoltys/carrier/wiki) for more information.
 
@@ -24,31 +24,30 @@ An example configuration file can be seen below:
 {
     "server": {
         "localhost": "server.mydomain.com",
-        "port": 25,
-        
         "force_tls": true
     },
 
     "client": {
         "dkim": true,
         "dkim_selector": "mail",
-        "dkim_private_key": "/usr/lib/carrier/dkim.der",
+        "dkim_private_key": "/home/tomcat7/.config/carrier/dkim.der",
 
-        "domain": "mydomain.com"
+        "domain": "mydomain.com",
+        "keystore": "/home/tomcat7/.config/carrier/keystore",
+        "keystore_password": "1234567"
     },
 
     "accounts": [
-        { "username": "myusername", "password": "mypassword" }
+        { "username": "username", "password": "password" }
     ]
 }
-
 ```
 
-Check out [this page](https://github.com/stevesoltys/carrier/wiki) for more information.
+Check out [this page](https://github.com/stevesoltys/carrier/wiki/Configuration) for more information.
 
 ## Development
-After checking out the repo, run `gradle build` to install dependencies and build the project. You can run `gradle run` to
-start the application.
+After checking out the repo, run `gradle build` to install dependencies and build the project. You can run `gradle war` to
+build a WAR file to be used for deployment.
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at https://github.com/stevesoltys/carrier. This project is intended to
