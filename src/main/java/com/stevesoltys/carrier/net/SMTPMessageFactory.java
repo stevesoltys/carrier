@@ -13,10 +13,7 @@ import tech.blueglacier.email.Email;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.Session;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -26,6 +23,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -87,16 +86,55 @@ public class SMTPMessageFactory {
         message.setSubject(email.getEmailSubject());
 
         Multipart multipart = new MimeMultipart();
+        multipart.addBodyPart(createMimeMessageBody(email));
 
-        InputStream stream = email.getPlainTextEmailBody().getIs();
-        String result = new BufferedReader(new InputStreamReader(stream)).lines().collect(Collectors.joining("\n"));
+        for(BodyPart attachment : createMimeMessageAttachments(email)) {
+            multipart.addBodyPart(attachment);
+        }
+
+        message.setContent(multipart);
+        return message;
+    }
+
+    /**
+     * Creates a {@link MimeMessage} body using the given incoming e-mail.
+     *
+     * @param email The parsed e-mail.
+     * @return The body of the message.
+     * @throws MessagingException If there is an error while constructing the body of the message.
+     */
+    private BodyPart createMimeMessageBody(Email email) throws MessagingException {
 
         BodyPart textBodyPart = new MimeBodyPart();
-        textBodyPart.setText(result);
-        multipart.addBodyPart(textBodyPart);
+
+        if (email.getHTMLEmailBody() != null) {
+            InputStream stream = email.getHTMLEmailBody().getIs();
+
+            String result = new BufferedReader(new InputStreamReader(stream)).lines().collect(Collectors.joining("\n"));
+            textBodyPart.setContent(result, "text/html; charset=utf-8");
+
+        } else if (email.getPlainTextEmailBody() != null) {
+            InputStream stream = email.getPlainTextEmailBody().getIs();
+
+            String result = new BufferedReader(new InputStreamReader(stream)).lines().collect(Collectors.joining("\n"));
+            textBodyPart.setText(result);
+        }
+
+        return textBodyPart;
+    }
+
+    /**
+     * Creates a list of {@link MimeMessage} attachments using the given incoming e-mail.
+     *
+     * @param email The parsed e-mail.
+     * @return A list containing the attachments, if any.
+     * @throws Exception If there is an error while constructing the list of attachments.
+     */
+    private List<BodyPart> createMimeMessageAttachments(Email email) throws Exception {
+
+        List<BodyPart> attachments = new LinkedList<>();
 
         for (Attachment attachment : email.getAttachments()) {
-
             BodyPart attachmentBodyPart = new MimeBodyPart();
             attachmentBodyPart.setFileName(attachment.getAttachmentName());
 
@@ -104,12 +142,10 @@ public class SMTPMessageFactory {
             DataSource source = new ByteArrayDataSource(data, "application/octet-stream");
             attachmentBodyPart.setDataHandler(new DataHandler(source));
 
-            multipart.addBodyPart(attachmentBodyPart);
+            attachments.add(attachmentBodyPart);
         }
 
-        message.setContent(multipart);
-
-        return message;
+        return attachments;
     }
 
     /**
