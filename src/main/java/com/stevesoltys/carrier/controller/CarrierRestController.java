@@ -1,5 +1,6 @@
 package com.stevesoltys.carrier.controller;
 
+import com.stevesoltys.carrier.exception.CarrierAddressAlreadyExistsException;
 import com.stevesoltys.carrier.exception.CarrierAddressNotFoundException;
 import com.stevesoltys.carrier.model.MaskedAddress;
 import com.stevesoltys.carrier.repository.MaskedAddressRepository;
@@ -48,7 +49,7 @@ public class CarrierRestController {
     /**
      * Creates a {@link MaskedAddress}.
      *
-     * @param address The incoming address.
+     * @param address     The incoming address.
      * @param destination The outgoing address.
      */
     @RequestMapping(CREATE_MASKED_ADDRESS)
@@ -59,14 +60,14 @@ public class CarrierRestController {
         Optional<MaskedAddress> maskedAddressOptional = maskedAddressRepository.findByAddress(address);
 
         if (maskedAddressOptional.isPresent()) {
-            maskedAddressRepository.delete(maskedAddressOptional.get());
+            throw new CarrierAddressAlreadyExistsException(address);
         }
 
         maskedAddressRepository.save(new MaskedAddress(address, destination));
     }
 
     /**
-     * Gets a masked address.
+     * Gets a {@link MaskedAddress}.
      *
      * @param address The incoming address of the masked address.
      * @return The masked address.
@@ -74,14 +75,9 @@ public class CarrierRestController {
     @RequestMapping(GET_MASKED_ADDRESS)
     @ResponseBody
     public MaskedAddress get(@RequestParam(value = "address") String address) {
-
         Optional<MaskedAddress> maskedAddressOptional = maskedAddressRepository.findByAddress(address);
 
-        if (!maskedAddressOptional.isPresent()) {
-            throw new CarrierAddressNotFoundException(address);
-        }
-
-        return maskedAddressOptional.get();
+        return maskedAddressOptional.orElseThrow(() -> new CarrierAddressNotFoundException(address));
     }
 
     /**
@@ -94,14 +90,10 @@ public class CarrierRestController {
     @ResponseBody
     public MaskedAddress delete(@RequestParam(value = "address") String address) {
 
-        Optional<MaskedAddress> maskedAddressOptional = maskedAddressRepository.findByAddress(address);
+        MaskedAddress maskedAddress = maskedAddressRepository.findByAddress(address).orElseThrow(() ->
+                        new CarrierAddressNotFoundException(address));
 
-        if (!maskedAddressOptional.isPresent()) {
-            throw new CarrierAddressNotFoundException(address);
-        }
-
-        maskedAddressRepository.delete(maskedAddressOptional.get());
-
-        return maskedAddressOptional.get();
+        maskedAddressRepository.delete(maskedAddress);
+        return maskedAddress;
     }
 }
