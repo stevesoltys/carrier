@@ -21,7 +21,7 @@ public class MaskedAddress implements Serializable {
      * The e-mail address used for masking.
      */
     @Column
-    @EmbeddedId
+    @Id
     private final String address;
 
     /**
@@ -41,7 +41,7 @@ public class MaskedAddress implements Serializable {
     /**
      * A secure random instance, used for safely generating random tokens.
      */
-    private final SecureRandom secureRandom;
+    private transient final SecureRandom secureRandom;
 
     /**
      * Creates a masked address.
