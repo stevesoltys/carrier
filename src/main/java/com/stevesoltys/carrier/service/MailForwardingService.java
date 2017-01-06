@@ -11,8 +11,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tech.blueglacier.email.Email;
 
-import javax.mail.*;
-import javax.mail.internet.*;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import java.util.Optional;
 
 /**
@@ -57,13 +58,14 @@ public class MailForwardingService {
     /**
      * Forwards the given e-mail to the correct destination.
      *
+     * @param to    The e-mail address to find a {@link MaskedAddress} for.
      * @param email The e-mail.
      * @throws CarrierForwardingException If there is an error while forwarding the e-mail.
      */
-    public void forward(Email email) throws CarrierForwardingException {
+    public void forward(String to, Email email) throws CarrierForwardingException {
 
         try {
-            Optional<MaskedAddress> maskedAddressOptional = getMaskedAddress(email);
+            Optional<MaskedAddress> maskedAddressOptional = getMaskedAddress(to);
 
             if (!maskedAddressOptional.isPresent()) {
 
@@ -72,10 +74,9 @@ public class MailForwardingService {
             }
 
             MaskedAddress maskedAddress = maskedAddressOptional.get();
-            InternetAddress toAddress = new InternetAddress(email.getToEmailHeaderValue());
 
-            if (maskedAddress.getReplyAddresses().containsKey(toAddress.getAddress())) {
-                forwardReply(email, maskedAddress, toAddress.getAddress());
+            if (maskedAddress.getReplyAddresses().containsKey(to)) {
+                forwardReply(email, maskedAddress, to);
 
             } else {
                 forwardIncomingMail(email, maskedAddress);
@@ -92,28 +93,27 @@ public class MailForwardingService {
     /**
      * Finds a masked address for the given e-mail.
      *
-     * @param email The parsed e-mail.
+     * @param address The recipient e-mail address.
      * @return An optional, possibly containing a masked address.
      * @throws AddressException If there is an error while parsing the 'to' header in the e-mail.
      */
-    private Optional<MaskedAddress> getMaskedAddress(Email email) throws AddressException {
-        InternetAddress address = new InternetAddress(email.getToEmailHeaderValue());
+    private Optional<MaskedAddress> getMaskedAddress(String address) throws AddressException {
 
-        Optional<MaskedAddress> replyAddressOptional = maskedAddressRepository.findByReplyAddress(address.getAddress());
+        Optional<MaskedAddress> replyAddressOptional = maskedAddressRepository.findByReplyAddress(address);
 
         if (replyAddressOptional.isPresent()) {
             return replyAddressOptional;
         }
 
-        return maskedAddressRepository.findByAddress(address.getAddress());
+        return maskedAddressRepository.findByAddress(address);
     }
 
     /**
      * Forwards a reply to an e-mail.
      *
-     * @param email The parsed e-mail.
+     * @param email         The parsed e-mail.
      * @param maskedAddress The masked address that was used for the previous e-mail.
-     * @param replyAddress The address that the reply was sent to for forwarding.
+     * @param replyAddress  The address that the reply was sent to for forwarding.
      * @throws Exception If there is an error while forwarding the reply.
      */
     private void forwardReply(Email email, MaskedAddress maskedAddress, String replyAddress) throws Exception {
@@ -130,7 +130,7 @@ public class MailForwardingService {
     /**
      * Forwards incoming mail to the corresponding address.
      *
-     * @param email The parsed e-mail.
+     * @param email         The parsed e-mail.
      * @param maskedAddress The masked address that was triggered for this e-mail.
      * @throws Exception If there is an error while forwarding the e-mail.
      */

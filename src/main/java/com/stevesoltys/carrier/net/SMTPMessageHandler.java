@@ -49,19 +49,19 @@ public class SMTPMessageHandler implements SimpleMessageListener {
     }
 
     @Override
-    public boolean accept(String from, String recipient) {
+    public boolean accept(String from, String to) {
 
-        Optional<MaskedAddress> replyOptional = maskedAddressRepository.findByReplyAddress(recipient);
+        Optional<MaskedAddress> replyOptional = maskedAddressRepository.findByReplyAddress(to);
 
         if(replyOptional.isPresent() && from.equalsIgnoreCase(replyOptional.get().getDestination())) {
             return true;
         }
 
-        return maskedAddressRepository.findByAddress(recipient).isPresent();
+        return maskedAddressRepository.findByAddress(to).isPresent();
     }
 
     @Override
-    public void deliver(String from, String recipient, InputStream data) throws IOException {
+    public void deliver(String from, String to, InputStream data) throws IOException {
 
         ContentHandler contentHandler = new CustomContentHandler();
 
@@ -83,7 +83,7 @@ public class SMTPMessageHandler implements SimpleMessageListener {
         Email email = ((CustomContentHandler) contentHandler).getEmail();
 
         try {
-            mailForwardingService.forward(email);
+            mailForwardingService.forward(to, email);
 
         } catch (CarrierForwardingException e) {
             e.printStackTrace();
