@@ -41,14 +41,12 @@ dependencies {
     compile group: 'tech.blueglacier', name: 'email-mime-parser', version: '1.0.0'
     compile group: 'javax.mail', name: 'mail', version: '1.4'
     compile group: 'net.markenwerk', name: 'utils-mail-dkim', version: '1.1.7'
-
     compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212.jre7'
 
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.4.2.RELEASE'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
-
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.4.2.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '1.4.2.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '1.4.2.RELEASE'
 
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'org.springframework.boot', 'name': 'spring-boot-starter-test', version: '1.4.2.RELEASE'
 }
