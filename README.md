@@ -1,9 +1,9 @@
 # Carrier
-![License](https://img.shields.io/badge/license-MIT%20License-blue.svg)
+![Travis](https://img.shields.io/travis/stevesoltys/carrier.svg) ![License](https://img.shields.io/github/license/stevesoltys/carrier.svg) [![Codacy Badge](https://img.shields.io/codacy/grade/88a25f1833a647cf8161bdc136fd117c.svg)](https://www.codacy.com/app/stevesoltys/carrier/dashboard)
 
-Tired of endless amounts of spam in your inbox? Ever not trust a website with your personal information?
-You've found your solution! Carrier allows for the generation of e-mail addresses which forward all incoming
-mail to your actual address. Then, when you notice spam on a generated address, you can block it!
+Tired of endless amounts of spam in your inbox? Ever not trust a website with your personal information? You've found your solution!
+Carrier is a mail server which can generate masked addresses. When mail is sent to a masked address, it’s forwarded to your actual address, keeping it hidden.
+When you notice spam on a generated address, just block it!
 
 Carrier uses an embedded SMTP server to receive mail and PostgreSQL to store masked addresses.
 Incoming mail can be replied to, meaning one could have a single "real" address and mask all e-mail on a personal domain.
