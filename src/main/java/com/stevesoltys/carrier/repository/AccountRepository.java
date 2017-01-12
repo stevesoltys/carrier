@@ -39,11 +39,12 @@ public class AccountRepository {
     }
 
     /**
-     * Gets the set of {@link Account}s that are in this repository.
+     * Registers an account in the repository.
      *
-     * @return The accounts.
+     * @param account The account.
      */
-    public Set<Account> getAccounts() {
-        return accounts;
+    public void register(Account account) {
+        accounts.add(account);
     }
+
 }

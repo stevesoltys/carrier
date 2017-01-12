@@ -65,7 +65,7 @@ public class AccountConfiguration extends CarrierConfiguration {
                 String password = accountConfiguration.get(PASSWORD_KEY);
                 Account account = new Account(username, password);
 
-                accountRepository.getAccounts().add(account);
+                accountRepository.register(account);
             }
         } catch (NullPointerException | ClassCastException e) {
             throw new CarrierConfigurationException("Invalid account configuration.");
