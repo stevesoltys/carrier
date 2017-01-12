@@ -1,14 +1,11 @@
 # Carrier
-![Travis](https://img.shields.io/travis/stevesoltys/carrier.svg) ![License](https://img.shields.io/github/license/stevesoltys/carrier.svg) [![Codacy Badge](https://img.shields.io/codacy/grade/88a25f1833a647cf8161bdc136fd117c.svg)](https://www.codacy.com/app/stevesoltys/carrier/dashboard)
+[![Travis](https://img.shields.io/travis/stevesoltys/carrier.svg)](https://travis-ci.org/stevesoltys/carrier.svg?branch=master)
+[![codecov](https://img.shields.io/codecov/c/github/stevesoltys/carrier.svg)](https://codecov.io/gh/stevesoltys/carrier)
+[![Codacy Badge](https://img.shields.io/codacy/grade/88a25f1833a647cf8161bdc136fd117c.svg)](https://www.codacy.com/app/stevesoltys/carrier/dashboard)
 
-Tired of endless amounts of spam in your inbox? Ever not trust a website with your personal information? You've found your solution!
-Carrier is a mail server which can generate masked addresses. When mail is sent to a masked address, it’s forwarded to your actual address, keeping it hidden.
-When you notice spam on a generated address, just block it!
-
-Carrier uses an embedded SMTP server to receive mail and PostgreSQL to store masked addresses.
-Incoming mail can be replied to, meaning one could have a single "real" address and mask all e-mail on a personal domain.
-
-A REST API is provided for creating, modifying, and deleting masked e-mail addresses.
+Carrier is a self-hosted e-mail service which can generate 'masked' addresses.
+When mail is sent to a masked address, it’s forwarded to your actual address.
+When you notice spam coming from a masked address, just block it!
 
 ## Installation
 Since this is a mail server/client and uses an external database, installation does require configuration.
@@ -47,7 +44,7 @@ Check out [this page](https://github.com/stevesoltys/carrier/wiki/Configuration)
 
 ## Development
 After checking out the repo, run `gradle build` to install dependencies and build the project. You can run `gradle war` to
-build a WAR file to be used for deployment.
+build a WAR file for deployment.
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at https://github.com/stevesoltys/carrier. This project is intended to
