@@ -11,6 +11,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Optional;
 
+import static junit.framework.TestCase.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author Steve Soltys
  */
@@ -45,7 +48,7 @@ public class AccountRepositoryTests {
     public void testFindByUsername() {
         Optional<Account> accountOptional = accountRepository.findByUsername(MOCKED_ACCOUNT.getUsername());
 
-        assert accountOptional.isPresent() && MOCKED_ACCOUNT.equals(accountOptional.get());
+        assertTrue(accountOptional.isPresent() && MOCKED_ACCOUNT.equals(accountOptional.get()));
     }
 
     /**
@@ -55,7 +58,7 @@ public class AccountRepositoryTests {
     public void testFindByUsernameFailure() {
         Optional<Account> accountOptional = accountRepository.findByUsername(null);
 
-        assert !accountOptional.isPresent();
+        assertFalse(accountOptional.isPresent());
     }
 
     /**
@@ -65,7 +68,7 @@ public class AccountRepositoryTests {
     public void testRegister() {
         accountRepository.register(MOCKED_ACCOUNT);
 
-        assert accountRepository.findByUsername(MOCKED_ACCOUNT.getUsername()).isPresent();
+        assertTrue(accountRepository.findByUsername(MOCKED_ACCOUNT.getUsername()).isPresent());
     }
 
 }

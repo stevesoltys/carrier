@@ -47,7 +47,7 @@ public class SMTPServerConfiguration extends CarrierConfiguration {
 
     @Override
     @SuppressWarnings("unchecked")
-    void initialize(Map<String, Object> configuration) throws CarrierConfigurationException {
+    protected void initialize(Map<String, Object> configuration) throws CarrierConfigurationException {
 
         configuration = (Map<String, Object>) configuration.getOrDefault(SERVER_CONFIGURATION_KEY, null);
 

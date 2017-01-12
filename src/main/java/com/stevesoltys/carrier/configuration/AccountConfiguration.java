@@ -44,7 +44,7 @@ public class AccountConfiguration extends CarrierConfiguration {
 
     @Override
     @SuppressWarnings("unchecked")
-    void initialize(Map<String, Object> configuration) throws CarrierConfigurationException {
+    protected void initialize(Map<String, Object> configuration) throws CarrierConfigurationException {
 
         try {
             List<Map<String, String>> accounts = (List<Map<String, String>>) configuration.get(ACCOUNT_LIST_KEY);

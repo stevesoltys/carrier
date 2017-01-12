@@ -32,7 +32,7 @@ public class MailResolverService {
      * @param email The e-mail address used for the lookup.
      * @return An optional, potentially containing
      */
-    Optional<String> resolve(String email) {
+    protected Optional<String> resolve(String email) {
         Optional<String> domainOptional = extractDomain(email);
 
         if (!domainOptional.isPresent()) {

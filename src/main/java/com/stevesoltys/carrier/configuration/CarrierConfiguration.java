@@ -37,5 +37,5 @@ public abstract class CarrierConfiguration {
      * @param configuration The parsed configuration map.
      * @throws CarrierConfigurationException If there is an error while initializing this section of the configuration.
      */
-    abstract void initialize(Map<String, Object> configuration) throws CarrierConfigurationException;
+    protected abstract void initialize(Map<String, Object> configuration) throws CarrierConfigurationException;
 }
